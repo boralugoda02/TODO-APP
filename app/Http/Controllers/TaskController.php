@@ -8,10 +8,12 @@ use Illuminate\Http\Request;
 class TaskController extends Controller
 {
     public function index()
-    {
-        $tasks = Task::latest()->get();
-        return view('tasks.index', compact('tasks'));
-    }
+{
+    
+    $tasks = Task::oldest()->get();
+
+    return view('tasks.index', compact('tasks'));
+}
 
     public function create()
     {

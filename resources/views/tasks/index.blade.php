@@ -31,7 +31,7 @@
                     <form action="{{ route('tasks.complete', $taskItem->id) }}" method="POST">
                         @csrf
                         @method('PATCH')
-                        <button class="btn btn-sm {{ $taskItem->is_completed ? 'btn-outline-warning' : 'btn-success' }} rounded-pill px-3">
+                        <button type="submit" class="btn btn-sm {{ $taskItem->is_completed ? 'btn-outline-warning' : 'btn-success' }} rounded-pill px-3">
                             <i class="fa-solid {{ $taskItem->is_completed ? 'fa-rotate-left' : 'fa-check' }}"></i>
                         </button>
                     </form>
@@ -40,13 +40,9 @@
                         <i class="fa-solid fa-pen"></i>
                     </a>
 
-                    <form action="{{ route('tasks.destroy', $taskItem->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this task?');">
-                        @csrf
-                        @method('DELETE')
-                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </form>
+                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="openDeleteModal({{ $taskItem->id }})">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
                 </div>
             </div>
         @empty
@@ -56,4 +52,36 @@
             </div>
         @endforelse
     </div>
+
+    <dialog id="deleteModal" class="p-4 rounded-4 border-0 shadow-lg" style="max-width: 400px; width: 90%;">
+        <div class="text-center">
+            <i class="fa-solid fa-triangle-exclamation text-danger fa-3x mb-3"></i>
+            <h4 class="fw-bold text-dark mb-2">Are you sure?</h4>
+            <p class="text-muted mb-4">Do you really want to delete this task?</p>
+            
+            <div class="d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-light rounded-pill px-4" onclick="closeDeleteModal()">Cancel</button>
+                
+                <form id="deleteForm" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </dialog>
+
+    <script>
+        const modal = document.getElementById('deleteModal');
+        const deleteForm = document.getElementById('deleteForm');
+
+        function openDeleteModal(taskId) {
+            deleteForm.action = '/tasks/' + taskId;
+            modal.showModal();
+        }
+
+        function closeDeleteModal() {
+            modal.close();
+        }
+    </script>
 @endsection
